@@ -1,5 +1,45 @@
-import csv,os,sys,datetime,pytz,re
+import csv,os,sys,datetime,re
 import pandas as pd
+
+
+def edit_to_csv(a, b, c, d):
+    ''' THIS IS MY FUNCTION THAT LOOPS THROUGH THE LIST THAT WAS CREATED
+        I.E "DATE_LIST", IT RUNS THE EDIT() FUNCTION TO EDIT THE CSV FILE'''
+
+    csv_in = -1
+    with open("work_log1.csv", 'r') as fp:
+        next(fp)
+        reader = csv.reader(fp, delimiter=',')
+        for row in reader:
+            csv_in += 1
+            if row == a:
+                print(csv_in)
+
+                if b == 'a':
+                    alpha = d[c][0] = input("task: ")
+                    print(csv_in)
+                    edit("task", csv_in, alpha)
+                elif b == 'b':
+                    beta = d[c][1] = input("time: ")
+                    edit("time", csv_in, beta)
+                elif b == 'c':
+                    charlie = d[c][2] = input("notes: ")
+                    edit("notes", csv_in, charlie)
+                elif b == 'd':
+                    delta = d[c][3] = input("dates: ")
+                    edit("dates", csv_in, delta)
+                print(d)
+
+def previous(d,c):
+    header = ['task: ', 'time: ', 'notes: ', 'date: ']
+    print(header[0], d[c - 1][0])
+    print(header[1], d[c - 1][1])
+    print(header[2], d[c - 1][2])
+    print(header[3], d[c - 1][3])
+    print("")
+    cont = input("This is your previous search, press Enter to continue")
+    print("")
+
 
 
 def find_by_date_range():
@@ -18,53 +58,42 @@ def find_by_date_range():
 
     delta = date2 - date1
     o = []
-    count = -1
+    #count = -1
     for i in range(delta.days + 1):
         o.append((date1 + datetime.timedelta(i)).strftime('%Y-%m-%d'))
 
+    count = 0
+    date_list = []
     with open("work_log1.csv", 'r') as fp:
-        reader = csv.DictReader(fp, delimiter = ',')
+        next(fp)
+        reader = csv.reader(fp, delimiter=',')
         for row in reader:
-            count += 1
             for thing in o:
-                if thing == row["date"]:
-                    for key, value in row.items():
-                        print(key,':', value)
+                if thing == row[3]:
+                    date_list.append(row)
 
-                    print("")
-                    edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
-                    print("")
+        for thing in date_list:
+            print("task:", thing[0])
+            print("time:", thing[1])
+            print("notes:", thing[2])
+            print("dates:", thing[3])
+            print("")
 
-                    if edit_or_previous == 'e':
-                        edit_coloumn = input("What would you like to edit?\n"
-                                             "A) Task\n"
-                                             "B) Time\n"
-                                             "C) Notes\n"
-                                             "D) Date").lower()
-                        if edit_coloumn == 'a':
-                            edit("task", count)
-                        elif edit_coloumn == 'b':
-                            edit("time", count)
-                        elif edit_coloumn == 'c':
-                            edit("notes", count)
-                        elif edit_coloumn == 'd':
-                            edit("date", count)
+            edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
+            if edit_or_previous == 'e':
+                edit_coloumn = input("What would you like to edit?\n"
+                                     "A) Task\n"
+                                     "B) Time\n"
+                                     "C) Notes\n"
+                                     "D) Date").lower()
 
-                    elif edit_or_previous == "p":
-                        with open("work_log1.csv", 'r') as p:
-                            reader = csv.reader(p, delimiter=",")
-                            for _, line in enumerate(reader):
-                                if _ == count:
-                                    print("Here is your previous entry:\n"
-                                          "")
-                                    print("task: ", line[0])
-                                    print("time: ", line[1])
-                                    print("notes: ", line[2])
-                                    print("date: ", line[3])
-                                    print("")
-                                    keep_going = input("Press Enter to continue").lower()
-                                    print("")
+                edit_to_csv(thing, edit_coloumn, count, date_list)
 
+            elif edit_or_previous == 'p':
+                previous(date_list, count)
+
+            count += 1
+            print(count)
 
 def find_by_date_exact():
     '''THIS FUNCTION TAKES AN EXACT DATE FROM A USER,
@@ -84,48 +113,40 @@ def find_by_date_exact():
           "If no matches were made\n"
           "You will return back to the previous menu.\n"
           "")
-    count = -1
+
+
+    count = 0
+    date_list = []
     with open("work_log1.csv", 'r') as fp:
-        reader = csv.DictReader(fp, delimiter = ',')
+        next(fp)
+        reader = csv.reader(fp, delimiter= ',')
         for row in reader:
+            if find == row[3]:
+                date_list.append(row)
+
+        for thing in date_list:
+            print("task:", thing[0])
+            print("time:", thing[1])
+            print("notes:", thing[2])
+            print("dates:", thing[3])
+            print("")
+
+            edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
+            if edit_or_previous == 'e':
+                edit_coloumn = input("What would you like to edit?\n"
+                                     "A) Task\n"
+                                     "B) Time\n"
+                                     "C) Notes\n"
+                                     "D) Date").lower()
+
+                edit_to_csv(thing, edit_coloumn, count, date_list)
+
+            elif edit_or_previous == 'p':
+                previous(date_list, count)
+
             count += 1
-            if find in row["date"]:
-                for key, value in row.items():
-                    print(key,':', value)
+            print(count)
 
-                print("")
-                edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
-                print("")
-
-                if edit_or_previous == 'e':
-                    edit_coloumn = input("What would you like to edit?\n"
-                                         "A) Task\n"
-                                         "B) Time\n"
-                                         "C) Notes\n"
-                                         "D) Date").lower()
-                    if edit_coloumn == 'a':
-                        edit("task", count)
-                    elif edit_coloumn == 'b':
-                        edit("time", count)
-                    elif edit_coloumn == 'c':
-                        edit("notes", count)
-                    elif edit_coloumn == 'd':
-                        edit("date", count)
-
-                elif edit_or_previous == "p":
-                    with open("work_log1.csv", 'r') as p:
-                        reader = csv.reader(p,delimiter=",")
-                        for _, line in enumerate(reader):
-                            if _ == count:
-                                print("Here is your previous entry:\n"
-                                      "")
-                                print("task: ",line[0])
-                                print("time: ", line[1])
-                                print("notes: ", line[2])
-                                print("date: ", line[3])
-                                print("")
-                                keep_going= input("Press Enter to continue").lower()
-                                print("")
 
 def userstime():
     '''THIS FUNCTION IS RUN DURING THE ADD FUNCTION,
@@ -134,21 +155,19 @@ def userstime():
        THE TIME THEY ENTERED THAT INFORMATION.
     '''
 
-    userst = datetime.datetime.now()
-    new_userst = pytz.utc.localize(userst)
+    new_userst = datetime.date.today()
     return new_userst
 
 
-def edit(x,y):
+def edit(x,y,new):
     '''THIS FUNCTION IS RUN DURING OTHER FUNCTIONS,
        IT TAKES AN INPUT OF DATA,
        THEN IT CHANGES THE CSV BASED ON ITS INDEX
        Y = INDEX, X = CHANGE
     '''
 
-    new_change = input("input new data: ")
-    fp = pd.read_csv("work_log1.csv")
-    fp.set_value(y, x, new_change)
+    fp = pd.read_csv("work_log1.csv", error_bad_lines=False)
+    fp.set_value(y, x, new)
     fp.to_csv("work_log1.csv", index=False)
     print("Your change has been made\n"
           "")
@@ -207,6 +226,11 @@ def lookup():
 
 
 def date():
+    '''THIS FUNCTION RUNS MAKES THE USER CHOOSE IF THEY
+       WANT TO SEARCH A DATE USING THE EXACT DATE,
+       OR BY USING A DATE RANGE
+    '''
+
     exact_or_range = input("A) Would you like to find entries by an exact date?\n"
                            "or\n"
                            "B) Find entries by a range of two dates?"
@@ -215,8 +239,6 @@ def date():
         find_by_date_exact()
     elif exact_or_range == 'b':
         find_by_date_range()
-
-
 
 
 def time():
@@ -240,49 +262,37 @@ def time():
           "You will return back to the previous menu.\n"
           "")
 
-    count = -1
-
+    count = 0
+    date_list = []
     with open("work_log1.csv", 'r') as fp:
-        reader = csv.DictReader(fp, delimiter=',')
+        next(fp)
+        reader = csv.reader(fp, delimiter= ',')
         for row in reader:
-            count+=1
-            if find == row["time"]:
-                for key, value in row.items():
-                    print(key,':',value)
+            if find == row[1]:
+                date_list.append(row)
 
-                print("")
-                edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
-                print("")
+        for thing in date_list:
+            print("task:", thing[0])
+            print("time:", thing[1])
+            print("notes:", thing[2])
+            print("dates:", thing[3])
+            print("")
 
-                if edit_or_previous == 'e':
-                    edit_coloumn = input("What would you like to edit?\n"
-                                         "A) Task\n"
-                                         "B) Time\n"
-                                         "C) Notes\n"
-                                         "D) Date").lower()
-                    if edit_coloumn == 'a':
-                        edit("task", count)
-                    elif edit_coloumn == 'b':
-                        edit("time", count)
-                    elif edit_coloumn == 'c':
-                        edit("notes", count)
-                    elif edit_coloumn == 'd':
-                        edit("date", count)
+            edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
+            if edit_or_previous == 'e':
+                edit_coloumn = input("What would you like to edit?\n"
+                                     "A) Task\n"
+                                     "B) Time\n"
+                                     "C) Notes\n"
+                                     "D) Date").lower()
 
-                elif edit_or_previous == "p":
-                    with open("work_log1.csv", 'r') as p:
-                        reader = csv.reader(p,delimiter=",")
-                        for _, line in enumerate(reader):
-                            if _ == count:
-                                print("Here is your previous entry:\n"
-                                      "")
-                                print("task: ",line[0])
-                                print("time: ", line[1])
-                                print("notes: ", line[2])
-                                print("date: ", line[3])
-                                print("")
-                                keep_going = input("Press Enter to continue").lower()
-                                print("")
+                edit_to_csv(thing, edit_coloumn, count, date_list)
+
+            elif edit_or_previous == 'p':
+                previous(date_list, count)
+
+            count += 1
+            print(count)
 
 
 def exact():
@@ -304,49 +314,37 @@ def exact():
           "You will return back to the previous menu.\n"
           "")
 
-    count = -1
-
+    count = 0
+    date_list = []
     with open("work_log1.csv", 'r') as fp:
-        reader = csv.DictReader(fp, delimiter = ',')
+        next(fp)
+        reader = csv.reader(fp, delimiter= ',')
         for row in reader:
+            if find == row[0] or find == row[2]:
+                date_list.append(row)
+
+        for thing in date_list:
+            print("task:", thing[0])
+            print("time:", thing[1])
+            print("notes:", thing[2])
+            print("dates:", thing[3])
+            print("")
+
+            edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
+            if edit_or_previous == 'e':
+                edit_coloumn = input("What would you like to edit?\n"
+                                     "A) Task\n"
+                                     "B) Time\n"
+                                     "C) Notes\n"
+                                     "D) Date").lower()
+
+                edit_to_csv(thing, edit_coloumn, count, date_list)
+
+            elif edit_or_previous == 'p':
+                previous(date_list, count)
+
             count += 1
-            if find == row["task"] or find == row["notes"]:
-                for key, value in row.items():
-                    print(key,":",value)
-
-                print("")
-                edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
-                print("")
-
-                if edit_or_previous == 'e':
-                    edit_coloumn = input("What would you like to edit?\n"
-                                         "A) Task\n"
-                                         "B) Time\n"
-                                         "C) Notes\n"
-                                         "D) Date").lower()
-                    if edit_coloumn == 'a':
-                        edit("task", count)
-                    elif edit_coloumn == 'b':
-                        edit("time", count)
-                    elif edit_coloumn == 'c':
-                        edit("notes", count)
-                    elif edit_coloumn == 'd':
-                        edit("date", count)
-
-                elif edit_or_previous == "p":
-                    with open("work_log1.csv", 'r') as p:
-                        reader = csv.reader(p, delimiter=",")
-                        for _, line in enumerate(reader):
-                            if _ == count:
-                                print("Here is your previous entry:\n"
-                                      "")
-                                print("task: ", line[0])
-                                print("time: ", line[1])
-                                print("notes: ", line[2])
-                                print("date: ", line[3])
-                                print("")
-                                keep_going = input("Press Enter to continue").lower()
-                                print("")
+            print(count)
 
 
 def pattern():
@@ -367,50 +365,39 @@ def pattern():
           "If no matches were made\n"
           "You will return back to the previous menu.\n"
           "")
-    count = -1
+
+
+    count = 0
+    date_list = []
     with open("work_log1.csv", 'r') as fp:
-        reader = csv.DictReader(fp, delimiter=',')
+        next(fp)
+        reader = csv.reader(fp, delimiter=',')
         for row in reader:
-            count +=1
-            if re.findall(r"{}".format(find), row["task"]) or re.findall(r"{}".format(find), row["notes"]):
-                for key, value in row.items():
-                    print(key,':',value)
+            if re.findall(r"{}".format(find), row[0]) or re.findall(r"{}".format(find), row[2]):
+                date_list.append(row)
 
-                print("")
-                edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
-                print("")
+    for thing in date_list:
+        print("task:", thing[0])
+        print("time:", thing[1])
+        print("notes:", thing[2])
+        print("dates:", thing[3])
+        print("")
 
-                if edit_or_previous == 'e':
-                    edit_coloumn = input("What would you like to edit?\n"
-                                         "A) Task\n"
-                                         "B) Time\n"
-                                         "C) Notes\n"
-                                         "D) Date").lower()
-                    if edit_coloumn == 'a':
-                        edit("task", count)
-                    elif edit_coloumn == 'b':
-                        edit("time", count)
-                    elif edit_coloumn == 'c':
-                        edit("notes", count)
-                    elif edit_coloumn == 'd':
-                        edit("date", count)
+        edit_or_previous = input("[P]revious, [E]dit, Enter for next: ").lower()
+        if edit_or_previous == 'e':
+            edit_coloumn = input("What would you like to edit?\n"
+                                 "A) Task\n"
+                                 "B) Time\n"
+                                 "C) Notes\n"
+                                 "D) Date").lower()
 
-                elif edit_or_previous == "p":
-                    with open("work_log1.csv", 'r') as p:
-                        reader = csv.reader(p, delimiter=",")
-                        for _, line in enumerate(reader):
-                            if _ == count:
-                                print("Here is your previous entry:\n"
-                                      "")
-                                print("task: ", line[0])
-                                print("time: ", line[1])
-                                print("notes: ", line[2])
-                                print("date: ", line[3])
-                                print("")
-                                keep_going = input("Press Enter to continue").lower()
-                                print("")
+            edit_to_csv(thing, edit_coloumn, count, date_list)
 
+        elif edit_or_previous == 'p':
+            previous(date_list, count)
 
+        count += 1
+        print(count)
 
 '''THIS IS THE MAIN BODY, IT PROMPTS THE USER FOR INPUT,
    WHATEVER THE INPUT IS, DECIDES WHICH FUNCTIONS ABOVE,
