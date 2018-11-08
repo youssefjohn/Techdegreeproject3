@@ -1,8 +1,12 @@
 task,time,notes,date
-bjj,60,buy new gi,2018-11-03 22:06:47.895141+00:00
-boxing,45,buy new gloves,2018-11-03 22:07:02.502902+00:00
-wrestling,120,i hate it,2018-11-03 22:07:17.046430+00:00
-task,15,notes,2018-11-04 11:34:50.757133+00:00
-task 2,20,notes 2,2018-11-04 11:35:29.748141+00:00
-task 3,30,notes? this is a,2018-11-04 11:35:47.107840+00:00
-zimbabwe,15,,2018-11-04 11:36:02.667119+00:00
+bjj,60,buy new gi,2018-11-03
+boxing,45,note,2018-11-03
+wrestling,120,i hate it,2018-11-03
+task,15,notes,2018-11-04
+task 2,20,notes 2,2018-11-04
+task 3,30,notes? this is a,2018-11-04
+zimbabwe,15,,2018-11-04
+django,500,gtfred,2000-10-10
+rgfeds,29-29-,test,2011-11-11
+test2,test2,test2,2011-11-11
+try,40,tyy,2018-11-08

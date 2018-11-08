@@ -1,5 +1,14 @@
-import csv,os,sys,datetime,re
+import csv, os, sys, datetime, re
 import pandas as pd
+
+
+def clear():
+    ''' THIS FUNCTION CLEARS THE SCREEN'''
+
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
 
 
 def edit_to_csv(a, b, c, d):
@@ -27,19 +36,23 @@ def edit_to_csv(a, b, c, d):
                     edit("notes", csv_in, charlie)
                 elif b == 'd':
                     delta = d[c][3] = input("dates: ")
-                    edit("dates", csv_in, delta)
-                print(d)
+                    edit("date", csv_in, delta)
 
-def previous(d,c):
+
+def previous(d, c):
+    ''' THIS FUNCTION IS RAN IN MANY OTHER FUNCTIONS,
+        IT LOOPS THROUGH THE "DATE_LIST" LIST,
+        AND ALLOWS THE USER TO CHECK ON A PREVIOUS INPUT
+    '''
+
     header = ['task: ', 'time: ', 'notes: ', 'date: ']
     print(header[0], d[c - 1][0])
     print(header[1], d[c - 1][1])
     print(header[2], d[c - 1][2])
     print(header[3], d[c - 1][3])
     print("")
-    cont = input("This is your previous search, press Enter to continue")
-    print("")
-
+    cont = input("This is your previous search\n"
+                 "Please press Enter")
 
 
 def find_by_date_range():
@@ -47,6 +60,8 @@ def find_by_date_range():
        IT THEN LOOPS THROUGH THE CSV AND IF A MATCH IS MADE,
        IT SHOWS ALL OF THE CSV ROWS THAT ARE WITHIN THE DATE RANGE
     '''
+
+    clear()
 
     date_entry = input('Enter a date (i.e. 2017,7,1)')
     year, month, day = map(int, date_entry.split(','))
@@ -58,7 +73,6 @@ def find_by_date_range():
 
     delta = date2 - date1
     o = []
-    #count = -1
     for i in range(delta.days + 1):
         o.append((date1 + datetime.timedelta(i)).strftime('%Y-%m-%d'))
 
@@ -93,7 +107,7 @@ def find_by_date_range():
                 previous(date_list, count)
 
             count += 1
-            print(count)
+
 
 def find_by_date_exact():
     '''THIS FUNCTION TAKES AN EXACT DATE FROM A USER,
@@ -101,6 +115,7 @@ def find_by_date_exact():
        IT SHOWS ALL OF THE CSV ROWS THAT MATCH THAT EXACT DATE
     '''
 
+    clear()
     while True:
         find = input("Please enter a valid date in the form YYYY-MM-DD.\n"
                      "> ")
@@ -114,12 +129,11 @@ def find_by_date_exact():
           "You will return back to the previous menu.\n"
           "")
 
-
     count = 0
     date_list = []
     with open("work_log1.csv", 'r') as fp:
         next(fp)
-        reader = csv.reader(fp, delimiter= ',')
+        reader = csv.reader(fp, delimiter=',')
         for row in reader:
             if find == row[3]:
                 date_list.append(row)
@@ -145,7 +159,6 @@ def find_by_date_exact():
                 previous(date_list, count)
 
             count += 1
-            print(count)
 
 
 def userstime():
@@ -159,7 +172,7 @@ def userstime():
     return new_userst
 
 
-def edit(x,y,new):
+def edit(x, y, new):
     '''THIS FUNCTION IS RUN DURING OTHER FUNCTIONS,
        IT TAKES AN INPUT OF DATA,
        THEN IT CHANGES THE CSV BASED ON ITS INDEX
@@ -181,13 +194,15 @@ def add():
     taskname = input("What is your task name? ")
     timetaken = input("How long did it take in minutes? ")
     addnotes = input("Any additional notes? ")
-    print("Your date has been automatically added, Thank you.")
+    cont = input("Your date has been automatically added, Thank you.\n"
+                 "Press ENTER to continue back to the main menu.")
+    clear()
 
-    with open("work_log1.csv", 'a') as fp:
+    with open("work_log1.csv", 'a', newline='') as fp:
         fieldnames = ["task", "time", "notes", "date"]
-        writer = csv.DictWriter(fp,fieldnames=fieldnames)
+        writer = csv.DictWriter(fp, fieldnames=fieldnames)
         writer.writerow({fieldnames[0]: taskname, fieldnames[1]: timetaken,
-                          fieldnames[2]: addnotes, fieldnames[3]:userstime()})
+                         fieldnames[2]: addnotes, fieldnames[3]: userstime()})
 
     return taskname, timetaken, addnotes
 
@@ -198,14 +213,15 @@ def lookup():
        FIND "DATE", THEN THEY TYPE "A" AND ENTER
     '''
 
+    clear()
     while True:
         find = input("What would you like to find?\n"
-                    "a) Find by Date\n"
-                    "b) Find by Time spent(minutes)\n"
-                    "c) Find by Exact\n"
-                    "d) Find by Pattern\n"
-                    "e) Go back to previous menu\n"
-                    "> ").lower()
+                     "a) Find by Date\n"
+                     "b) Find by Time spent(minutes)\n"
+                     "c) Find by Exact\n"
+                     "d) Find by Pattern\n"
+                     "e) Go back to previous menu\n"
+                     "> ").lower()
 
         if find == "a":
             date()
@@ -230,7 +246,7 @@ def date():
        WANT TO SEARCH A DATE USING THE EXACT DATE,
        OR BY USING A DATE RANGE
     '''
-
+    clear()
     exact_or_range = input("A) Would you like to find entries by an exact date?\n"
                            "or\n"
                            "B) Find entries by a range of two dates?"
@@ -247,10 +263,10 @@ def time():
         COLOUMN FOR A MATCH, IF A MATCH IT MADE
         IT PRINTS IT OUT TO THE USER
     '''
-
+    clear()
     while True:
         find = input("Please enter a time in minutes(rounded)\n"
-                    "> ")
+                     "> ")
 
         if len(find) < 1:
             continue
@@ -266,7 +282,7 @@ def time():
     date_list = []
     with open("work_log1.csv", 'r') as fp:
         next(fp)
-        reader = csv.reader(fp, delimiter= ',')
+        reader = csv.reader(fp, delimiter=',')
         for row in reader:
             if find == row[1]:
                 date_list.append(row)
@@ -292,7 +308,6 @@ def time():
                 previous(date_list, count)
 
             count += 1
-            print(count)
 
 
 def exact():
@@ -301,6 +316,7 @@ def exact():
         IF A MATCH IT MADE IT PRINTS IT OUT TO THE USER
     '''
 
+    clear()
     while True:
         find = input("Please enter the exact word you want to find\n"
                      "> ")
@@ -318,7 +334,7 @@ def exact():
     date_list = []
     with open("work_log1.csv", 'r') as fp:
         next(fp)
-        reader = csv.reader(fp, delimiter= ',')
+        reader = csv.reader(fp, delimiter=',')
         for row in reader:
             if find == row[0] or find == row[2]:
                 date_list.append(row)
@@ -344,7 +360,6 @@ def exact():
                 previous(date_list, count)
 
             count += 1
-            print(count)
 
 
 def pattern():
@@ -353,6 +368,7 @@ def pattern():
         AND NOTES COLOUMN FOR A MATCH, IF A MATCH IT MADE
         IT PRINTS IT OUT TO THE USER'''
 
+    clear()
     while True:
         find = input("please enter your Regex pattern\n"
                      "> ")
@@ -365,7 +381,6 @@ def pattern():
           "If no matches were made\n"
           "You will return back to the previous menu.\n"
           "")
-
 
     count = 0
     date_list = []
@@ -397,7 +412,7 @@ def pattern():
             previous(date_list, count)
 
         count += 1
-        print(count)
+
 
 '''THIS IS THE MAIN BODY, IT PROMPTS THE USER FOR INPUT,
    WHATEVER THE INPUT IS, DECIDES WHICH FUNCTIONS ABOVE,
@@ -406,7 +421,7 @@ def pattern():
 filename = "work_log1.csv"
 file_exists = os.path.isfile((filename))
 
-with open("work_log1.csv", 'a') as fp:
+with open("work_log1.csv", 'a', newline='') as fp:
     fieldnames = ["task", "time", "notes", "date"]
     writer = csv.DictWriter(fp, fieldnames=fieldnames)
     if not file_exists:
@@ -414,10 +429,10 @@ with open("work_log1.csv", 'a') as fp:
 
 while True:
     choice = input("Hi Welcome. What would you like to do\n"
-                    "a) Add a new log\n"
-                    "b) Look up a previous log\n"
-                    "c) Quit the Database\n"
-                    "> ").lower()
+                   "a) Add a new log\n"
+                   "b) Look up a previous log\n"
+                   "c) Quit the Database\n"
+                   "> ").lower()
 
     if not len(choice) == 1:
         print("Sorry please answer 'a' or 'b' only.")
@@ -428,4 +443,3 @@ while True:
             lookup()
         elif choice == 'c':
             sys.exit("Goodbye")
-
